@@ -1,0 +1,33 @@
+
+<div class="form-group">
+   <input type="search" class="form-control" style="background-color:white;" placeholder="Search product by name or description" [(ngModel)]="search">
+</div>
+
+
+           <div *ngFor="let product of allProducts | filter:search" style="border: 8px solid #ddd;border-radius: 4px;padding: 15px;width: 350px;">
+             
+              <img src="data:image/png;base64,{{product.logo}}" width="300px;" height="200px;"/>
+
+      
+              <p style="color: lightblue;font-size: 200%;"><b> {{product.prodprice | currency:'R'}}</b></p>
+            
+              <p>{{product.prodname}}</p>
+              
+            
+              <p>{{ product.proddecription}}</p>
+
+
+             
+              <button *ngIf="authority === 'user'" [disabled]="false" type="submit"   class="btn  btn-success" (click)="OnAddCart(product)" matTooltip="Click Add to Cart  Button">Add to cart</button>
+      
+              <button *ngIf="authority === 'admin'" [disabled]="false" routerLink='/updateproduct'  class="btn btn-secondary" matTooltip="Click Update Button" >update</button>
+                  
+              <button *ngIf="authority === 'admin'" [disabled]="false" (click)="deleteProduct(product.id)" class="btn btn-danger" matTooltip="Click Delete Button" >Delete</button>
+
+              
+          
+           </div>
+
+           <div *ngIf="(allProducts| filter:search).length <1">
+            <b>Product Not Found </b>
+          </div>

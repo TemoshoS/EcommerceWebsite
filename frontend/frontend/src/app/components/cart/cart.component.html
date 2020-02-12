@@ -1,0 +1,228 @@
+
+<ngb-accordion #acc="ngbAccordion" [closeOthers]="true" activeIds="static-1">
+  <ngb-panel id="static-1"  >
+    <ng-template ngbPanelTitle>
+      <span><b style="color: silver">Items Details</b></span>
+    </ng-template>
+    <ng-template ngbPanelContent>
+      
+
+
+
+<div>
+  <a routerLink="/productdisplay" class="btn btn-info"><i class="fa fa-angle-left"></i> Continue Shopping</a><br>
+  <div class="card">
+  <div class="card-body">
+    
+<h1 style="color: rgba(45, 85, 79, 0.548)">Items in your cart<span style="margin-left: 5%;margin-right: 22%;color: rgba(45, 85, 79, 0.548)">
+        Total value is: {{allTotal|| "0"}}</span>
+<button class="btn btn-secondary" style="text-align : bold;" (click)="acc.toggle('static-2')">Checkout</button>
+</h1>
+        
+        <table class="table table-bordered table-responsive table-hover">
+          <thead >
+          <tr>
+            <th>Image</th>
+            <th>Name </th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Remove And Add </th>
+            <th>Total For Items</th>
+          </tr>
+          </thead>
+          <tr *ngFor="let prod of productAddedTocart;let q = index">
+            <td><img src="data:image/png;base64,{{prod.logo}}" width="250px;" height="200px;"/></td>
+            <td class="text-center">{{prod.prodname}}</td>
+            <td>{{prod.prodprice | currency:'R'  }}</td>
+            <td>{{prod.prodquantity}}</td>
+            <td>
+              <div class="form-inline">
+              <button type="button" (click)="onRemoveQuantity(prod)" class="btn btn-info">-</button> 
+              <input type="text"  [ngModel] ="prod.Quantity" (ngModelChange) ="prod.prodquantity=$event" class="form-control form-inline" id="count">
+              <button type="button" (click)="onAddQuantity(prod)" class="btn btn-info">+</button>
+              </div>
+            </td>
+            <td>{{prod.prodprice * prod.prodquantity| currency:'R'}}</td>
+          </tr>
+        </table>
+    </div>
+  </div>
+</div>
+</ng-template>
+</ngb-panel>
+
+
+
+
+<!--delivery address-->
+
+<ngb-panel id="static-2">
+  <ng-template ngbPanelTitle>
+    <span><b style="color: silver">Delivery Address </b></span>
+  </ng-template>
+
+  
+    
+
+  <ng-template ngbPanelContent>
+
+    <div class="row col-sm-6" style="max-width:350px;">
+      <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+        <div class="form-group">
+          <label for="postalcode"  style="color: silver"><b>Postal code</b></label>  
+          <input type="text" class="form-control" name="postalcode" [(ngModel)]="form.postalcode" #postalcode="ngModel" required />
+          <div *ngIf="f.submitted && postalcode.invalid">
+            <div *ngIf="postalcode.errors.required">postalcode is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="streetaddress"  style="color: silver"><b>Street Address</b></label>  
+          <input type="text" class="form-control" name="streetaddress" [(ngModel)]="form.streetaddress" #streetaddress="ngModel"
+            required />
+          <div *ngIf="f.submitted && streetaddress.invalid">
+            <div *ngIf="streetaddress.errors.required">streetaddress is required</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="city"  style="color: silver"><b>City</b></label>  
+          <input type="text" class="form-control" name="city" [(ngModel)]="form.city" #city="ngModel" required  />
+          <div *ngIf="f.submitted && city.invalid">
+            <div *ngIf="city.errors.required">city is required</div>
+          
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="province"  style="color: silver"><b>Province</b></label>  
+          <input type="province" class="form-control" name="province" [(ngModel)]="form.province" #province="ngModel"
+            required  />
+          <div *ngIf="f.submitted && province.invalid">
+            <div *ngIf="province.errors.required">province is required</div>
+           
+          </div>
+        </div>
+        <div class="form-group">
+          <button class="btn btn-secondary">Add Address</button>
+        </div>
+      </form>
+    </div>
+    <h1><button class="btn btn-secondary" style="text-align : bold;" (click)="acc.toggle('static-3')">Proceed to Order</button></h1>
+</ng-template>
+</ngb-panel>
+
+
+<!--orders-->
+<ngb-panel id="static-3">
+  <ng-template ngbPanelTitle>
+    <span><b style="color: silver">Order Details </b></span>
+  </ng-template>
+  <ng-template ngbPanelContent>
+    <form [formGroup]="deliveryForm" (ngSubmit)="yourSubmitFunction(deliveryForm)">
+      <div class="form-group">
+        <div class="col-md-12">
+          <h5 style="color: silver" >Name:</h5>  <input type="text"  formControlName="username" class="form-control"   >
+        </div>
+        <div  class="col-md-12">
+            <h5 style="color: silver" >Delivery Address:</h5> 
+            <textarea id="textarea" name="textarea" formControlName="deliveryaddress" class="form-control"  rows="3" cols="15"></textarea>
+          </div>
+          <div class="col-md-12">
+              <h5 style="color: silver" >Phone:</h5>  <input type="text" formControlName="phone" class="form-control"   >
+            </div>
+            <div class="col-md-12">
+                <h5 style="color: silver" >Email:</h5>  <input type="text" formControlName="email" class="form-control"   >
+              </div>
+              <div class="col-md-12">
+                  <h5 style="color: rgb(204, 199, 199)" >Message:</h5>  <input type="text" formControlName="message" class="form-control"   >
+                </div>
+                <div class="col-md-12">
+                    <h5 style="color: silver" >Total Amount To Pay:</h5>  <input type="text" formControlName="amount" class="form-control"   >
+                  </div>
+      </div>
+      <button type="submit" style="margin-left: 39%;" [disabled]="!deliveryForm.valid" class="btn btn-secondary" (click)="acc.toggle('static-3')"><b></b></button>
+    </form>
+</ng-template>
+</ngb-panel>
+
+
+
+
+<!--order confirmation-->
+<ngb-panel id="static-3"  >
+  <ng-template ngbPanelTitle>
+    <span><b style="color: silver">Confirm Your Order</b></span>
+  </ng-template>
+  <ng-template ngbPanelContent>
+   <table>
+     <tr class="col-md-12">
+        <td class="col-md-6"  ><h2 style="color: peachpuff">Item Details</h2></td>          
+     </tr>
+     <tr class="col-md-12">
+       <td class="col-md-6">
+         <!-- -- Item details Table -->
+         <table class="table table-bordered  table-hover">
+            <thead class="thead-light">
+            <tr>
+              <th>Name </th>
+              <th>Price</th>
+              <th>Quantity</th>
+              <th>Total For Item</th>
+            </tr>
+            </thead>
+            <tr *ngFor="let prod of productAddedTocart;let q = index">
+              <td class="text-center">{{prod.prodname}}</td>
+              <td>{{prod.prodprice | currency:'R'}}</td>
+              <td>{{prod.prodquantity}}</td>
+              <td>{{prod.prodprice * prod.prodquantity| currency:'R' }}</td>
+            </tr>
+          </table>
+
+        </td>
+      </tr>
+          <tr class="col-md-12">
+           <td class="col-md-6"><h2 style="color: peachpuff">Delivery Details</h2></td>          
+         </tr>
+         <tr class="col-md-12">
+          <td class="col-md-6">
+         <table class="table table-bordered  table-hover">
+          <thead class="thead-light">
+          <tr>
+            <th>Name</th>
+            <th>Delivery Address</th>
+            <th>Phone</th>
+            <th>Email</th>
+            <th>Message</th>
+          </tr>
+          </thead>
+          <tr>
+            <td>{{deliveryForm.value.username}}</td>
+            <td>{{deliveryForm.value.deliveryaddress}}</td>
+            <td>{{deliveryForm.value.phone}}</td>
+            <td>{{deliveryForm.value.email}}</td>
+            <td>{{deliveryForm.value.message}}</td>
+          </tr>
+        </table>
+
+       </td>
+       <td class="col-md-6">
+          <!-- --Delivery Table -->
+         
+                   </td>
+     </tr>
+     <tr>
+       <td  class="text-center" >
+          <button type="button" class="btn btn-outline-secondary" (click)="ConfirmOrder()"><b>Confirm Order</b></button>
+       </td>
+     </tr>
+   </table>
+   <p *ngFor="let alert of alerts">
+    <ngb-alert style="width: 758px;" [type]="alert.type" (close)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+  </p>
+      
+     
+  </ng-template>
+</ngb-panel>
+
+
+
+
+</ngb-accordion>

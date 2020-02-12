@@ -1,0 +1,179 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  
+  <a class="navbar-brand" routerLink='/productdisplay'>
+  <img src="./assets/images/Captures - Copy.PNG"></a>
+  <form  >
+      <input  style="background-color: white;width: 700px;height: 30px;"  type="search" placeholder="  " >
+      
+    </form>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" style="padding-left: 150px;" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item active" *ngIf="!isLoggedIn">
+        <a class="nav-link navbar-text"  (click)="open(content)" href="#">Singin / Signup</a>
+      </li>
+      <div class="btn-group mr-3" *ngIf="isLoggedIn" >
+        <button type="button" class="btn btn-info"><b>User Details</b></button>
+        <div class="btn-group" ngbDropdown role="group" aria-label="Button group with nested dropdown">
+          <button class="btn btn-light dropdown-toggle-split" ngbDropdownToggle></button>
+          <div class="dropdown-menu" ngbDropdownMenu>
+            <button routerLink='/profile' class="dropdown-item"><i>Profile</i></button>
+            <button *ngIf="authority === 'admin'" routerLink='/dashboard' class="dropdown-item"><i>Add products</i></button>
+            <button *ngIf="authority === 'admin'" routerLink='/updateproduct' class="dropdown-item"><i>Update products</i></button>
+            <button class="dropdown-item" (click)="LogOut()">LogOut</button>
+          </div>
+        </div>
+      </div>
+    
+      <li class="nav-item active">
+          
+          <button type="button"  routerLink='/cart' class="btn btn-info">
+            Cart  <span class="badge badge-light">{{cartItemCount}}</span>
+            <span class="sr-only">unread messages</span>
+          </button>
+        </li>
+        <li  class="nav-item active">
+         
+        </li>
+    </ul>
+
+  </div>
+</nav>
+
+
+<!--  Model Code Start -->
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header" style="background: rgba(4, 247, 206, 0.226); font-size: xx-large;">
+    <h4 class="modal-title"  id="modal-basic-title">Login and Registration</h4>
+    <button type="button" class="close" aria-label="Close" (click)="d('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <!-- Tab Start Code -->
+    <ngb-tabset>
+        <ngb-tab >
+          <ng-template ngbTabTitle><b>Login</b> </ng-template>
+          <ng-template ngbTabContent >
+            <br>
+            <div class="row col-sm-6" style="max-width:350px;">
+              <form name="form" (ngSubmit)="f.form.valid && onSubmit()" #f="ngForm" novalidate>
+                <div class="card  bg-secondary text-white"  style="width: 48rem;">
+                  <div class="card-body">
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" class="form-control" name="username" [(ngModel)]="form.username" placeholder="name" #username="ngModel"
+                    required />
+                  <div *ngIf="f.submitted && username.invalid">
+                    <div *ngIf="username.errors.required">Username is required</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" name="password" [(ngModel)]="form.password" placeholder="******" #password="ngModel"
+                    required minlength="6" />
+                  <div *ngIf="f.submitted && password.invalid">
+                    <div *ngIf="password.errors.required">Password is required</div>
+                    <div *ngIf="password.errors.minlength">Password must be at least 6 characters</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn-success" matTooltip="Click Login Button">Login</button>
+                  <div *ngIf="f.submitted && isLoginFailed" class="alert alert-danger">
+                    Login failed: {{errorMessage}}
+                  </div>
+                </div>
+              </div>
+            </div>
+              </form>
+          
+            </div>
+          </ng-template>
+        </ngb-tab>
+        <!--registration-->
+        <ngb-tab>
+          <ng-template ngbTabTitle><b>Register</b> </ng-template>
+          <ng-template ngbTabContent>
+            <br>
+            <div class="row col-sm-6" style="max-width:350px;">
+              <form name="form" (ngSubmit)="f.form.valid && OnRegister()" #f="ngForm" novalidate>
+                <div class="card  bg-secondary text-white"  style="width: 48rem;">
+                  <div class="card-body">
+                <div class="form-group">
+                  <label for="name">Full name</label>
+                  <input type="text" class="form-control" name="name" [(ngModel)]="form.name" placeholder="full name" #name="ngModel" required />
+                  <div *ngIf="f.submitted && name.invalid">
+                    <div *ngIf="name.errors.required">Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <input type="text" class="form-control" name="username" [(ngModel)]="form.username" placeholder="username" #username="ngModel"
+                    required />
+                  <div *ngIf="f.submitted && username.invalid">
+                    <div *ngIf="username.errors.required">Username is required</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="text" class="form-control" name="email" [(ngModel)]="form.email" placeholder="email" #email="ngModel" required email />
+                  <div *ngIf="f.submitted && email.invalid">
+                    <div *ngIf="email.errors.required">Email is required</div>
+                    <div *ngIf="email.errors.email">Email must be a valid email address</div>
+                  </div>
+                </div>
+
+
+          
+
+
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  <input type="password" class="form-control" name="password" [(ngModel)]="form.password" placeholder="password" #password="ngModel"
+                    required minlength="6" />
+                  <div *ngIf="f.submitted && password.invalid">
+                    <div *ngIf="password.errors.required">Password is required</div>
+                    <div *ngIf="password.errors.minlength">Password must be at least 6 characters</div>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <button class="btn btn-success" matTooltip="Click Register Button">Register</button>
+                  
+                  <div *ngIf="f.submitted && isSignUpFailed" class="alert alert-warning">
+                    Signup failed!<br/>{{errorMessage}}
+                  </div>
+                </div>
+              </div>
+            </div>
+              </form>
+            </div>
+
+          </ng-template>
+
+          
+        </ngb-tab>
+      </ngb-tabset>
+      <!-- Tab End Code -->
+      
+  </div>
+  <div class="modal-footer">
+    <p *ngFor="let alert of alerts">
+      <ngb-alert style="width: 758px;" [type]="alert.type" (close)="closeAlert(alert)">{{ alert.message }}</ngb-alert>
+    </p>
+  </div>
+</ng-template>
+
+<!-- main app container -->
+<div class="jumbotron"  style="height:300vh;background-color:white;">
+  <div class="container">
+      
+              
+   <router-outlet></router-outlet>
+          
+</div>
+</div>
+
