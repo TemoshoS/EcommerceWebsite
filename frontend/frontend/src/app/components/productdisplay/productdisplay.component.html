@@ -1,33 +1,115 @@
 
-<div class="form-group">
-   <input type="search" class="form-control" style="background-color:white;" placeholder="Search product by name or description" [(ngModel)]="search">
+
+<div id="demo" class="carousel slide" data-ride="carousel">
+
+  <!-- Indicators -->
+  <ul class="carousel-indicators">
+    <li data-target="#demo" data-slide-to="0" class="active"></li>
+    <li data-target="#demo" data-slide-to="1"></li>
+    <li data-target="#demo" data-slide-to="2"></li>
+    <li data-target="#demo" data-slide-to="3"></li>
+    <li data-target="#demo" data-slide-to="4"></li>
+    <li data-target="#demo" data-slide-to="5"></li>
+    
+  </ul>
+  
+  <!-- The slideshow -->
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="./assets/images/Pioneer.PNG" alt="Pioneer" width="600" height="50">
+      <div class="carousel-caption">
+        <h3 style="color: lightblue;font-size: 200%;">Pioneer cdj</h3>
+        <p style="color: lightblue;font-size: 200%;">The price you see is the price pay #makoyaDJ</p>
+      </div> 
+    </div>
+    <div class="carousel-item">
+      <img src="./assets/images/iPhone 11 Pro.PNG"  alt="iphone 11 pro" width="10000" height="50">
+      <div class="carousel-caption">
+        <h3 style="color: lightblue;font-size: 200%;">iPhone 11 Pro</h3>
+    <p style="color: lightblue;font-size: 200%;">Quality over quantity</p>
+ </div> 
+</div>
+<div class="carousel-item">
+<img src="./assets/images/Samsung s10.PNG" alt="Samsung s10" width="600" height="50">
+<div class="carousel-caption">
+<h3 style="color: lightblue;font-size: 200%;">Samsung s10</h3>
+ <p style="color: lightblue;font-size: 200%;">if the is condtition Samsung s10 then anser</p>
+ </div> 
+   </div>
+  
+
+<div class="carousel-item">
+<img src="./assets/images/Samsung s10.PNG" alt="Samsung s10" width="600" height="50">
+<div class="carousel-caption">
+<h3 style="color: lightblue;font-size: 200%;">Samsung s10</h3>
+<p style="color: lightblue;font-size: 200%;">if the is condtition Samsung s10 then anser</p>
+</div> 
+</div>
+
+</div>
+<div class="carousel-item">
+<img src="./assets/images/Samsung s10.PNG" alt="Samsung s10" width="600" height="50">
+<div class="carousel-caption">
+<h3 style="color: lightblue;font-size: 200%;">Samsung s10</h3>
+<p style="color: lightblue;font-size: 200%;">if the is condtition Samsung s10 then anser</p>
+</div> 
+</div>
+
+  
+
+  
+  <!-- Left and right controls -->
+
+<a class="carousel-control-prev" href="#demo" data-slide="prev">
+<span class="carousel-control-prev-icon"></span>
+</a>
+<a class="carousel-control-next" href="#demo" data-slide="next">
+<span class="carousel-control-next-icon"></span>
+</a>
 </div>
 
 
-           <div *ngFor="let product of allProducts | filter:search" style="border: 8px solid #ddd;border-radius: 4px;padding: 15px;width: 350px;">
-             
-              <img src="data:image/png;base64,{{product.logo}}" width="300px;" height="200px;"/>
-
+<div class="header">
+    <div class="col-md-12 cart">
+      <h3>WHAT DO YOU NEED TO STOCK UP ON?</h3>
+    </div>
+    <div class="form-group">
+      <input type="search" class="form-control" style="background-color:white;" placeholder="i'm looking for" [(ngModel)]="search">
+   </div>
       
-              <p style="color: lightblue;font-size: 200%;"><b> {{product.prodprice | currency:'R'}}</b></p>
-            
-              <p>{{product.prodname}}</p>
-              
-            
-              <p>{{ product.proddecription}}</p>
-
-
-             
-              <button *ngIf="authority === 'user'" [disabled]="false" type="submit"   class="btn  btn-success" (click)="OnAddCart(product)" matTooltip="Click Add to Cart  Button">Add to cart</button>
-      
-              <button *ngIf="authority === 'admin'" [disabled]="false" routerLink='/updateproduct'  class="btn btn-secondary" matTooltip="Click Update Button" >update</button>
+ <div class="col-md-38">
+<div class="container">
+<div class="row">
+<div class="col-sm-3" *ngFor="let product of allProducts | filter:search">
+<div class="tileContainer">
+div>
+<img src="data:image/png;base64,{{product.logo}}"style="width:10em;height:8em;">
+</div>
+<div style="font-weight:bold; color: lightblue;font-size: 200%;">
+{{product.prodprice | currency:'R'}}
+</div>
+<div >
+<b>{{product.prodname}}</b>
                   
-              <button *ngIf="authority === 'admin'" [disabled]="false" (click)="deleteProduct(product.id)" class="btn btn-danger" matTooltip="Click Delete Button" >Delete</button>
-
+</div>
+  <div>
+            
+<i>{{ product.proddecription}}</i>
+</div>
               
-          
-           </div>
-
-           <div *ngIf="(allProducts| filter:search).length <1">
-            <b>Product Not Found </b>
-          </div>
+<div>
+               
+</div>
+<button button type="button" style="margin-right: 20%;" matTooltip="Click Add to chart Button" class="btn btn-success" (click)="OnAddCart(product)">
+Add to cart
+</button>
+</div>
+</div>
+<div *ngIf="(allProducts| filter:search).length &lt; 1">
+<b>Product Not Found </b>
+</div>
+</div>
+</div>
+</div>
+    
+</div>
