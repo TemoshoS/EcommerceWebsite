@@ -198,7 +198,7 @@ export class CartComponent implements OnInit {
             .subscribe((result) => {
               this.globalResponse = result;              
             },
-            error => { //This is success part
+            error => { 
               console.log(error.message);
               this.alerts.push({
                 id: 2,
@@ -210,7 +210,7 @@ export class CartComponent implements OnInit {
               });
             },
             () => {
-                //  This is error part
+                
                 this.alerts.push({
                   id: 1,
                   type: 'success',
