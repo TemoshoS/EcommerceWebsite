@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { Product } from 'src/app/models/product';
 import { ProductService } from 'src/app/services/product.service';
 import { Alert } from 'src/app/models/alert';
@@ -10,8 +10,8 @@ import { OrderService } from 'src/app/services/order.service';
 import { OrderItem } from 'src/app/models/order-item';
 import { Addressinfo } from 'src/app/auth/addressinfo';
 import { AddressService } from 'src/app/services/address.service';
-import { Producdto } from 'src/app/auth/producdto';
-import { Login } from 'src/app/models/login';
+import { Observable } from 'rxjs'; 
+import { TokenStorageService} from 'src/app/auth/token-storage.service';
 
 
 @Component({
@@ -21,6 +21,7 @@ import { Login } from 'src/app/models/login';
 })
 export class CartComponent implements OnInit {
 
+  dataSaved = false;  
   defaultQuantity:number=1;
   productAddedTocart:Product[];
   allTotal:number;
@@ -29,6 +30,7 @@ export class CartComponent implements OnInit {
   orderItem:OrderItem[];
   form: any = {};  
   address: Addressinfo;
+  success:boolean = false;
   
   
    
@@ -39,37 +41,24 @@ export class CartComponent implements OnInit {
   deliveryForm:FormGroup;
 
 
-  constructor(private productService:ProductService,private fb: FormBuilder,private authService:AuthenticationService,private orderService:OrderService,private addS:AddressService) 
+  constructor(private productService:ProductService,private fb: FormBuilder,private authService:AuthenticationService,private orderService:OrderService,private addS:AddressService,private token:TokenStorageService) 
   {
     
    }
    onSubmit()
    {
  
-     this.address=new Addressinfo(
-       this.form.postalcode,
-       this.form.streetaddress,
-       this.form.city,
-       this.form.province,
- 
- 
-     );
-    
-     this.addS.addAddress(this.address).subscribe((response) => {
-     console.log(response);
-     this.globalResponse = response;  
-     }
-   
-    )
- 
    }
 
-
+   reload()
+   {
+    window.location.reload();
+   }
 
   ngOnInit() {
     this.productAddedTocart=this.productService.getProductFromCart();
     for (let i in this.productAddedTocart) {
-      this.productAddedTocart[i].prodquantity=1;
+      this.productAddedTocart[i].prodquantity=this.productAddedTocart[i].prodquantity;
    }
    this.productService.removeAllProductFromCart();
    this.productService.addProductToCart(this.productAddedTocart);
@@ -81,21 +70,31 @@ export class CartComponent implements OnInit {
    this.deliveryForm = this.fb.group({
     username:  ['', [Validators.required]],
     deliveryaddress:['',[Validators.required]],
-    phone:['',[Validators.required]],
-    email:['',[Validators.required]],
+    phone:['',[Validators.required, Validators.minLength(10),Validators.pattern("^[0-9]*$"),Validators.maxLength(10)]],
+    email: ['', [Validators.required, Validators.email]],
     message:['',[]],
     amount:['',[Validators.required]],
 
   });
 
-  this.deliveryForm.controls['username'].setValue(this.currentUser["username"]);
-  this.deliveryForm.controls['phone'].setValue(this.currentUser["phone"]);
-  this.deliveryForm.controls['email'].setValue(this.currentUser["email"]);
+  this.deliveryForm.controls['username'].setValue(this.token.getUsername());
   this.deliveryForm.controls['amount'].setValue(this.allTotal);
+  }
+
+  //delete product by id
+  deletProduct()
+  {
+  this.productService.removeAllProductFromCart();
+  }
+
+  get email() 
+  {
+     return this.deliveryForm.get('email'); 
   }
   onAddQuantity(product:Product)
   {
     //Get Product
+    this.dataSaved = true;
     this.productAddedTocart=this.productService.getProductFromCart();
     this.productAddedTocart.find(p=>p.id==product.id).prodquantity = product.prodquantity+1;
     
@@ -103,25 +102,30 @@ export class CartComponent implements OnInit {
   this.productService.addProductToCart(this.productAddedTocart);
   this.calculteAllTotal(this.productAddedTocart);
   this.deliveryForm.controls['amount'].setValue(this.allTotal);
+  
    
   }
   onRemoveQuantity(product:Product)
   {
+    this.dataSaved = true;
     this.productAddedTocart=this.productService.getProductFromCart();
     this.productAddedTocart.find(p=>p.id==product.id). prodquantity = product.prodquantity-1;
     this.productService.removeAllProductFromCart();
     this.productService.addProductToCart(this.productAddedTocart);
     this.calculteAllTotal(this.productAddedTocart);
     this.deliveryForm.controls['amount'].setValue(this.allTotal);
+    
 
   }
   calculteAllTotal(allItems:Product[])
   {
+    this.dataSaved = true;
     let total=0;
     for (let i in allItems) {
       total= total+(allItems[i].prodquantity *allItems[i].prodprice);
    }
    this.allTotal=total;
+   
   }
 
   GetLoggedinUserDetails()
@@ -129,28 +133,50 @@ export class CartComponent implements OnInit {
     this.currentUser=this.authService.getRole();
             
   } 
+
+  deleteProduct(id: number){
+
+    this.dataSaved = true;
+     var products = JSON.parse(localStorage["product"]);
+     var i;
+    
+     var x = localStorage.getItem("product");
+    for (i=0;i<products.length;i++)
+               
+    if (products[i].id == id) products.splice(i,1);
+    localStorage["product"] = JSON.stringify(products);
+    localStorage.setItem("product",JSON.stringify(products));
+      
+  }
+
+  resetForm()
+  {
+    this.deliveryForm.reset();
+    this.dataSaved = false;
+  }
   ConfirmOrder()
   {
     const date: Date = new Date();
-    var id=this.currentUser['id'];
-    var name=this.currentUser['username'];
+    var name=this.token.getUsername();
     var day = date.getDate();
-    var monthIndex = date.getMonth();
+    var monthIndex = date.getMonth()+1;
     var year = date.getFullYear();
     var minutes = date.getMinutes();
     var hours = date.getHours();
     var seconds = date.getSeconds();
-    var dateTimeStamp=day.toString()+monthIndex.toString()+year.toString()+minutes.toString()+hours.toString()+seconds.toString();
+    var dateTimeStamp=day.toString()+"-"+monthIndex.toString()+"-"+year.toString()+" "+hours.toString()+":"+minutes.toString()+":"+seconds.toString();;
     let orderDetail:any={};
     
     //Orderdetail is object which hold all the value, which needs to be saved into database
-    orderDetail.CustomerId=this.currentUser['id'];
-    orderDetail.CustomerName=this.currentUser["username"];
-    orderDetail.DeliveryAddress=this.deliveryForm.controls['deliveryaddress'].value;
-    orderDetail.Phone=this.deliveryForm.controls['phone'].value;
+    orderDetail.username=this.deliveryForm.controls['username'].value;
+    orderDetail.deliveryaddress=this.deliveryForm.controls['deliveryaddress'].value;
+    orderDetail.phone=this.deliveryForm.controls['phone'].value;
+    orderDetail.paymentrefrenceid= name + dateTimeStamp;
+    orderDetail.orderpaymethod = "Pay On Delivery";
+    orderDetail.totprice = this.deliveryForm.controls['amount'].value;
+    orderDetail.email = this.deliveryForm.controls['email'].value;
 
-    orderDetail.PaymentRefrenceId=id+"-"+name+dateTimeStamp;
-    orderDetail.OrderPayMethod="Pay On Delivery";
+    
     
     //Assigning the ordered item details
     this.orderItem=[];
@@ -158,33 +184,38 @@ export class CartComponent implements OnInit {
       this.orderItem.push({
         ID:0,
         ProductID:this.productAddedTocart[i].id,
-        ProductName:this.productAddedTocart[i]. prodname,
-        OrderedQuantity:this.productAddedTocart[i].prodquantity,
+       ProductName:this.productAddedTocart[i]. prodname,
+       OrderedQuantity:this.productAddedTocart[i].prodquantity,
         PerUnitPrice:this.productAddedTocart[i]. prodprice,
-        OrderID:0,
+       OrderID:0,
       }) ;
    }
-      //So now complete object of order is
-    orderDetail.OrderItems=this.orderItem;
+     
 
+   
+ 
     this.orderService.PlaceOrder(orderDetail)
             .subscribe((result) => {
               this.globalResponse = result;              
             },
-            error => { //This is error part
+            error => { //This is success part
               console.log(error.message);
               this.alerts.push({
                 id: 2,
+
+        
                 type: 'danger',
                 message: 'Something went wrong while placing the order, Please try again.'
+                
               });
             },
             () => {
-                //  This is Success part
+                //  This is error part
                 this.alerts.push({
                   id: 1,
                   type: 'success',
-                  message: 'Order has been placed succesfully.',
+                message: 'Order has been placed succesfully.',
+                  
                 });
                 
                 }
